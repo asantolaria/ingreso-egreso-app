@@ -1,8 +1,8 @@
 {
   "hosting": [
     {
-      "target": "ingresoEgresoApp",
-      "public": "dist/ingresoEgresoApp",
+      "target": "ingresoEgreso",
+      "public": "dist/ingresoEgreso",
       "ignore": [
         "firebase.json",
         "**/.*",

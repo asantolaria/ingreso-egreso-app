@@ -1,11 +1,10 @@
-import {createAction, props} from '@ngrx/store';
-import {Usuario} from '../models/usuario.model';
+import { createAction, props } from '@ngrx/store';
+import { Usuario } from '../models/usuario.model';
 
-export const setuser = createAction(
-        '[Auth] setUser',
-        props<{user: Usuario}>()
+export const setUser = createAction(
+    '[Auth] setUser',
+    props<{ user: Usuario }>()
 );
 
-export const unsetuser = createAction(
-        '[Auth] unSetUser',
-);
+export const unSetUser = createAction('[Auth] unSetUser');
+

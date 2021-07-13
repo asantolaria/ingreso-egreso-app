@@ -1,40 +1,44 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {AuthService} from '../../services/auth.service';
-import {Router} from '@angular/router';
-import {AppState} from '../../app.reducer';
-import {Store} from '@ngrx/store';
-import {Subscription} from 'rxjs';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { AuthService } from '../../services/auth.service';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/app.reducer';
+
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
-    selector: 'app-sidebar',
-    templateUrl: './sidebar.component.html',
-    styles: []
+  selector: 'app-sidebar',
+  templateUrl: './sidebar.component.html',
+  styles: []
 })
 export class SidebarComponent implements OnInit, OnDestroy {
 
-    userSubs: Subscription;
-    nombre: string = '';
+  nombre: string = '';
+  userSubs: Subscription;
 
-    constructor(private authService: AuthService,
-                private store: Store<AppState>,
-                private routers: Router) {
-    }
+  constructor( private authService: AuthService,
+               private router: Router,
+               private store: Store<AppState> ) { }
 
-    ngOnInit() {
-        this.userSubs = this.store.select('user')
-                .subscribe( user => {
-            this.nombre = user.user?.nombre;
-        });
-    }
+  ngOnInit() {
+    this.userSubs = this.store.select('user')
+                      .pipe(
+                        filter( ({user}) => user != null )
+                      )
+                      .subscribe( ({ user }) => this.nombre = user.nombre );
+  }
 
-    ngOnDestroy() {
-        this.userSubs.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.userSubs.unsubscribe();
+  }
 
-    logout() {
-        this.authService.logout().then(() => {
-            this.routers.navigate(['/login']);
-        });
-    }
+  logout() {
+    this.authService.logout().then( () => {
+      this.router.navigate(['/login']);
+    })
+
+  }
 
 }

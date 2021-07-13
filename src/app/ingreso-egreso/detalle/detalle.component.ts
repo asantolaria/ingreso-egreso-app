@@ -1,10 +1,13 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {AppState} from '../../app.reducer';
-import {Store} from '@ngrx/store';
-import {IngresoEgreso} from '../../models/ingeso-egreso.model';
-import {Subscription} from 'rxjs';
-import {IngresoEgresoService} from '../../services/ingreso-egreso.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/app.reducer';
+import { IngresoEgreso } from '../../models/ingreso-egreso.model';
+
+import { Subscription } from 'rxjs';
+import { IngresoEgresoService } from '../../services/ingreso-egreso.service';
 import Swal from 'sweetalert2';
+import { AppStateWithIngreso } from '../ingreso-egreso.reducer';
 
 @Component({
   selector: 'app-detalle',
@@ -13,29 +16,25 @@ import Swal from 'sweetalert2';
 })
 export class DetalleComponent implements OnInit, OnDestroy {
 
-  ingresosEgresos: IngresoEgreso[] = [];
+  ingresosEgresos: IngresoEgreso[] = []
   ingresosSubs: Subscription;
 
-  constructor(
-          private ingresoEgresoService: IngresoEgresoService,
-          private store: Store<AppState>) { }
+  constructor( private store: Store<AppStateWithIngreso>,
+               private ingresoEgresoService: IngresoEgresoService ) { }
 
   ngOnInit() {
-    this.ingresosSubs = this.store.select('ingresosEgresos').subscribe( ie  => {
-      this.ingresosEgresos = ie.items;
-    });
+    this.ingresosSubs = this.store.select('ingresosEgresos')
+      .subscribe( ({ items }) => this.ingresosEgresos = items );
   }
-
-  ngOnDestroy() {
+  ngOnDestroy(){
     this.ingresosSubs.unsubscribe();
   }
 
-  borrar(uid: string) {
-    console.log(uid);
-    this.ingresoEgresoService.borrarIngresoEgreso(uid)
-            .then(() => Swal.fire('Borrado', 'Item Borrado', 'success'))
-            .catch(err => Swal.fire('Borrado', err.message, 'error'));
 
+  borrar( uid: string ) {
+    this.ingresoEgresoService.borrarIngresoEgreso( uid )
+      .then( ()   => Swal.fire('Borrado', 'Item borrado' , 'success') )
+      .catch( err => Swal.fire('Error', err.message , 'error') );
   }
 
 }
